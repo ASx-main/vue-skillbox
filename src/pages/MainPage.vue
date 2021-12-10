@@ -16,7 +16,6 @@
       />
       <section class="catalog">
         <ProductList :products="products"
-                     @gotoPage="(pageName, pageParams) => $emit('gotoPage', pageName, pageParams)"
         />
         <BasePagination
           v-model="currentPage"

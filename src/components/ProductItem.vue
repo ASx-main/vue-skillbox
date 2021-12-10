@@ -1,7 +1,7 @@
 <template>
   <li class="catalog__item">
     <a class="catalog__pic" href="#"
-       @click.prevent="$emit('gotoPage' , 'product', '{id: product: id}')">
+       @click.prevent="gotoPage('product', { id: product.id })">
       <img :src="product.img" :alt="product.title">
     </a>
 
@@ -38,11 +38,18 @@
 
 <script>
 
+import eventBas from '@/eventBas';
+
 export default {
   data() {
     return {
       color: '',
     };
+  },
+  methods: {
+    gotoPage(pageName, pageParams) {
+      eventBas.$emit('gotoPage', pageName, pageParams);
+    },
   },
   props: ['product', 'colorFilter'],
 };
