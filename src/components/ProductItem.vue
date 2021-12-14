@@ -12,7 +12,7 @@
     </h3>
 
     <span class="catalog__price">
-              {{product.price}} P
+              {{product.price | numberFormat}} P
     </span>
 
     <ul class="colors colors--black">
@@ -38,7 +38,8 @@
 
 <script>
 
-import eventBas from '@/eventBas';
+import gotoPage from '../helpers/gotoPage';
+import numberFormat from '../helpers/numberFormat';
 
 export default {
   data() {
@@ -47,9 +48,10 @@ export default {
     };
   },
   methods: {
-    gotoPage(pageName, pageParams) {
-      eventBas.$emit('gotoPage', pageName, pageParams);
-    },
+    gotoPage,
+  },
+  filters: {
+    numberFormat,
   },
   props: ['product', 'colorFilter'],
 };

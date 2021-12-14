@@ -10,7 +10,7 @@
 import MainPage from './pages/MainPage.vue';
 import ProductPage from './pages/ProductPage.vue';
 import NotFoundPage from './pages/NotFoundPage.vue';
-import eventBas from './eventBas';
+import eventBus from './eventBus';
 
 const routes = {
   main: 'MainPage',
@@ -39,7 +39,7 @@ export default {
     MainPage, ProductPage, NotFoundPage,
   },
   created() {
-    eventBas.$on('gotoPage', (namePage, nameParams) => this.gotoPage(namePage, nameParams));
+    eventBus.$on('gotoPage', (namePage, nameParams) => this.gotoPage(namePage, nameParams));
   },
 };
 </script>
