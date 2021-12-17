@@ -9,11 +9,11 @@
       </svg>
     </button>
 
-    <input type="text" v-model.number="amountItem">
+    <input type="text" :value="value" @input="handlerInput">
 
     <button type="button"
             aria-label="Добавить один товар"
-            @click.prevent="amountItem += 1"
+            @click.prevent="addProduct"
     >
       <svg width="12" height="12" fill="currentColor">
         <use xlink:href="#icon-plus"></use>
@@ -24,12 +24,18 @@
 
 <script>
 export default {
-  props: ['amountItem'],
+  props: ['value'],
   methods: {
     decreaseProduct() {
-      if (this.productAmount > 1) {
-        this.productAmount -= 1;
+      if (this.value > 1) {
+        this.$emit('input', this.value - 1);
       }
+    },
+    addProduct() {
+      this.$emit('input', this.value + 1);
+    },
+    handlerInput(e) {
+      this.$emit('input', e.target.value);
     },
   },
 };

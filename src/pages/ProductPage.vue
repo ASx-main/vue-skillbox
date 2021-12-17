@@ -137,7 +137,7 @@
 
             <div class="item__row">
 
-              <ProductAddToCart :amount-item="productAmount"/>
+              <ProductAddToCart v-model="productAmount"/>
 
               <button class="button button--primery" type="submit">
                   В корзину
@@ -226,10 +226,10 @@
 
 <script>
 
-import products from '../data/products';
-import categories from '../data/categories';
-import gotoPage from '../helpers/gotoPage';
-import numberFormat from '../helpers/numberFormat';
+import products from '@/data/products';
+import categories from '@/data/categories';
+import gotoPage from '@/helpers/gotoPage';
+import numberFormat from '@/helpers/numberFormat';
 import ProductAddToCart from '@/components/ProductAddToCart.vue';
 
 export default {
@@ -250,12 +250,24 @@ export default {
       return categories.find(((category) => category.id === this.product.categoriesId));
     },
   },
+  watch: {
+    productAmount(val) {
+      const product = {
+        productId: this.product.id,
+        amount: val,
+      };
+      this.$store.commit('addProduct', product);
+    },
+  },
   methods: {
     gotoPage,
     addToCart() {
       this.$store.commit(
         'addProductToCart',
-        { productId: this.product.id, amount: this.productAmount },
+        {
+          productId: this.product.id,
+          amount: this.productAmount,
+        },
       );
     },
 
