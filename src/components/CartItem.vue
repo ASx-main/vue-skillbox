@@ -15,6 +15,7 @@
     <div class="product__counter form__counter">
       <button type="button"
               aria-label="Убрать один товар"
+              @click.prevent="takeProductToCart(item.productId)"
       >
         <svg width="10" height="10" fill="currentColor">
           <use xlink:href="#icon-minus"></use>
@@ -25,6 +26,7 @@
 
       <button type="button"
               aria-label="Добавить один товар"
+              @click.prevent="addProductToCart(item.productId)"
       >
         <svg width="10" height="10" fill="currentColor">
           <use xlink:href="#icon-plus"></use>
@@ -73,6 +75,8 @@ export default {
   methods: {
     ...mapMutations({
       deleteProduct: 'deleteCartProduct',
+      addProductToCart: 'addProduct',
+      takeProductToCart: 'takeProduct',
     }),
   },
 };
