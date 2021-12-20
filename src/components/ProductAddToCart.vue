@@ -9,7 +9,7 @@
       </svg>
     </button>
 
-    <input type="text" :value="value" @input="handlerInput">
+    <input type="number" min="1" :value="value" @input="handlerInput">
 
     <button type="button"
             aria-label="Добавить один товар"
@@ -32,7 +32,11 @@ export default {
       }
     },
     addProduct() {
-      this.$emit('input', this.value + 1);
+      if (this.value > 1) {
+        this.$emit('input', this.value + 1);
+      } else {
+        this.value = 1;
+      }
     },
     handlerInput(e) {
       this.$emit('input', e.target.value);

@@ -43,7 +43,7 @@ export default new Vuex.Store({
     updateCartProductAmount(state, { productId, amount }) {
       const item = state.cartProduct
         .find((itemProduct) => itemProduct.productId === productId);
-      if (item) {
+      if (item > 1) {
         item.amount = amount;
       }
     },

@@ -22,7 +22,7 @@
         </svg>
       </button>
 
-      <input type="text" v-model="amount" name="count">
+      <input type="number" min="1" v-model.number="amount" name="count">
 
       <button type="button"
               aria-label="Добавить один товар"
