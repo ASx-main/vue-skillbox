@@ -43,8 +43,8 @@ export default new Vuex.Store({
     updateCartProductAmount(state, { productId, amount }) {
       const item = state.cartProduct
         .find((itemProduct) => itemProduct.productId === productId);
-      if (item > 1) {
-        item.amount = amount;
+      if (item) {
+        item.amount += amount;
       }
     },
     deleteCartProduct(state, productId) {
@@ -64,11 +64,12 @@ export default new Vuex.Store({
         .reduce((acc, item) => (item.product.price * item.amount) + acc, 0);
     },
     cartCountProduct(state, getters) {
-      if (getters.cartDetailProducts.length === 1) return `${getters.cartDetailProducts.length} товар`;
-      if (getters.cartDetailProducts.length > 1 && getters.cartDetailProducts.length < 5) {
-        return `${getters.cartDetailProducts.length} товара`;
+      const countProduct = getters.cartDetailProducts.reduce((acc, item) => (item.amount) + acc, 0);
+      if (countProduct === 1) { return `${countProduct} товар`; }
+      if (countProduct > 1 && countProduct < 5) {
+        return `${countProduct} товара`;
       }
-      return `${getters.cartDetailProducts.length} товаров`;
+      return `${countProduct} товаров`;
     },
   },
 });

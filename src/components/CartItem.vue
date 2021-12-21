@@ -67,7 +67,8 @@ export default {
       },
       set(val) {
         this.$store.commit('updateCartProductAmount', {
-          productId: this.item.productId, amount: val,
+          productId: this.item.productId,
+          amount: val,
         });
       },
     },

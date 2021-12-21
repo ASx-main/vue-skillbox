@@ -28,14 +28,12 @@ export default {
   methods: {
     decreaseProduct() {
       if (this.value > 1) {
-        this.$emit('input', this.value - 1);
+        this.$emit('input', Number(this.value) - 1);
       }
     },
     addProduct() {
-      if (this.value > 1) {
-        this.$emit('input', this.value + 1);
-      } else {
-        this.value = 1;
+      if (this.value) {
+        this.$emit('input', Number(this.value) + 1);
       }
     },
     handlerInput(e) {

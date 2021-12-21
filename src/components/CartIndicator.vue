@@ -7,7 +7,19 @@
       <use xlink:href="#icon-cart"></use>
     </svg>
     <span class="header__count" aria-label="Количество товаров">
-      {{ $store.state.cartProduct.length }}
+      {{ countProduct }}
     </span>
   </router-link>
 </template>
+
+<script>
+import { mapGetters } from 'vuex';
+
+export default {
+  computed: {
+    ...mapGetters({
+      countProduct: 'cartCountProduct',
+    }),
+  },
+};
+</script>
