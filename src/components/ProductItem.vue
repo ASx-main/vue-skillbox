@@ -3,7 +3,7 @@
     <router-link class="catalog__pic" href="#"
                  :to="{ name: 'product', params: { id: product.id } }"
        >
-      <img :src="product.img" :alt="product.title">
+      <img :src="product.image" :alt="product.title">
     </router-link>
 
     <h3 class="catalog__title">
@@ -19,7 +19,7 @@
     <ul class="colors colors--black">
       <li class="colors__item"
           v-for="color in product.colors"
-          :key="color"
+          :key="color.id"
 
       >
         <label class="colors__label">
@@ -28,7 +28,7 @@
                  v-model="product.color"
           >
           <span class="colors__value"
-                :style="`background-color: ${color};`"
+                :style="`background-color: ${color.code};`"
           >
           </span>
         </label>
