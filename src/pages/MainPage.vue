@@ -16,7 +16,7 @@
       />
       <section class="catalog">
         <ProductList
-          :products="filtered"
+          :products="products"
         />
         <BasePagination
           v-model="currentPage"
@@ -29,13 +29,11 @@
 </template>
 
 <script>
-
 import axios from 'axios';
-// import products from '@/data/products';
 import ProductList from '@/components/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductFiltered from '@/components/ProductFiltered.vue';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '@/config';
 
 export default {
   components: {
@@ -55,30 +53,6 @@ export default {
     };
   },
   computed: {
-    filtered() {
-      let filteredProducts = this.products;
-
-      if (this.filterPriceFrom > 0) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.price > this.filterPriceFrom);
-      }
-
-      if (this.filterPriceTo > 0) {
-        filteredProducts = filteredProducts.filter((product) => product.price < this.filterPriceTo);
-      }
-
-      if (this.filterCategoryId) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.categoriesId === this.filterCategoryId);
-      }
-
-      if (this.filterColors) {
-        filteredProducts = filteredProducts
-          .filter((product) => product.colors.filter((color) => color.id === this.filterColors));
-      }
-
-      return filteredProducts;
-    },
     products() {
       return this.productsData ? this.productsData.items.map((product) => ({
         ...product,
