@@ -53,11 +53,12 @@
             <li class="colors__item" v-for="color in colors" :key="color.id">
               <label class="colors__label">
                 <input class="colors__radio sr-only"
-                       type="radio" name="color"
-                       :value="color.value"
+                       type="radio"
+                       name="color"
+                       :value="color.id"
                        v-model="colorsFilter"
                 >
-                <span class="colors__value" :style="`background-color: ${color.value};`">
+                <span class="colors__value" :style="`background-color: ${color.code};`">
                   </span>
               </label>
             </li>
@@ -166,8 +167,8 @@
 </template>
 
 <script>
-import categories from '../data/categories';
-import colors from '../data/colors';
+import axios from 'axios';
+import { API_BASE_URL } from '../config';
 
 export default {
   data() {
@@ -176,15 +177,18 @@ export default {
       currentPriceTo: 0,
       currentCategoryId: 0,
       colorsFilter: '',
+
+      categoriesData: null,
+      colorsData: null,
     };
   },
   props: ['priceFrom', 'priceTo', 'categoryId', 'colorFilter'],
   computed: {
     categories() {
-      return categories;
+      return this.categoriesData ? this.categoriesData.items : [];
     },
     colors() {
-      return colors;
+      return this.colorsData ? this.colorsData.items : [];
     },
   },
   watch: {
@@ -197,7 +201,7 @@ export default {
     categoryId(val) {
       this.currentCategoryId = val;
     },
-    filterColors(val) {
+    colorFilter(val) {
       this.colorsFilter = val;
     },
   },
@@ -214,6 +218,22 @@ export default {
       this.$emit('update:categoryId', 0);
       this.$emit('update:colorFilter', '');
     },
+    loadCategoriesId() {
+      axios.get(`${API_BASE_URL}/api/productCategories`)
+        .then((response) => {
+          this.categoriesData = response.data;
+        });
+    },
+    loadColorsProduct() {
+      axios.get(`${API_BASE_URL}/api/colors`)
+        .then((response) => {
+          this.colorsData = response.data;
+        });
+    },
+  },
+  created() {
+    this.loadCategoriesId();
+    this.loadColorsProduct();
   },
 };
 </script>
