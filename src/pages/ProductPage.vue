@@ -135,10 +135,29 @@
 
                 <ProductAddToCart v-model="productAmount"/>
 
-                <button class="button button--primery" type="submit">
+                <button class="button button--primery" type="submit" :disabled="productAddSending">
                   В корзину
                 </button>
               </div>
+              <div v-show="productAdded">
+                <h3>
+                  Товар добавлен в корзину
+                </h3></div>
+              <div v-show="productAddSending"
+                   class="add-product-to-cart">
+                  <h3>
+                    Добавляем товар в корзину...
+                  </h3>
+                <div id="cube-loader">
+                  <div class="caption">
+                    <div class="cube-loader">
+                      <div class="cube loader-1"></div>
+                      <div class="cube loader-2"></div>
+                      <div class="cube loader-4"></div>
+                      <div class="cube loader-3"></div>
+                    </div>
+                  </div>
+                </div></div>
 
             </form>
           </div>
@@ -225,6 +244,7 @@
 <script>
 
 import axios from 'axios';
+import { mapActions } from 'vuex';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import ProductAddToCart from '@/components/ProductAddToCart.vue';
@@ -238,6 +258,8 @@ export default {
       productData: null,
       productLoad: false,
       productLoadFailed: false,
+      productAdded: false,
+      productAddSending: false,
     };
   },
   filters: {
@@ -271,32 +293,33 @@ export default {
   },
 
   methods: {
+    ...mapActions(['addProductToCart']),
     gotoPage,
     addToCart() {
-      this.$store.commit(
-        'addProductToCart',
-        {
-          productId: this.product.id,
-          amount: this.productAmount,
-        },
-      );
+      this.productAdded = false;
+      this.productAddSending = true;
+      this.addProductToCart({
+        productId: this.product.id,
+        amount: this.productAmount,
+      })
+        .then(() => {
+          this.productAdded = true;
+          this.productAddSending = false;
+        });
     },
     loadingProduct() {
       this.productLoad = true;
       this.productLoadFailed = false;
-      clearTimeout(this.loadProductTimer);
-      this.loadProductTimer = setTimeout(() => {
-        axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
-          .then((response) => {
-            this.productData = response.data;
-          })
-          .catch(() => {
-            this.productLoadFailed = true;
-          })
-          .then(() => {
-            this.productLoad = false;
-          });
-      }, 2000);
+      axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
+        .then((response) => {
+          this.productData = response.data;
+        })
+        .catch(() => {
+          this.productLoadFailed = true;
+        })
+        .then(() => {
+          this.productLoad = false;
+        });
     },
   },
 };
@@ -380,6 +403,11 @@ html, body {
   }
 }
 
+.add-product-to-cart {
+  display flex
+  justify-content center
+  flex-direction column
+}
 .failed {
   display flex
   justify-content center
