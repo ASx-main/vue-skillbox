@@ -81,13 +81,8 @@ export default new Vuex.Store({
         .reduce((acc, item) => (item.price * item.amount) + acc, 0);
     },
     cartCountProduct(state, getters) {
-      const countProduct = getters.cartDetailProducts
+      return getters.cartDetailProducts
         .reduce((acc, item) => (item.amount) + acc, 0);
-      if (countProduct === 1) { return `${countProduct} товар`; }
-      if (countProduct > 1 && countProduct < 5) {
-        return `${countProduct} товара`;
-      }
-      return `${countProduct} товаров`;
     },
   },
   actions: {
@@ -114,20 +109,19 @@ export default new Vuex.Store({
         });
     },
     addProductToCart(context, { productId, amount }) {
-      return (new Promise((resolve) => setTimeout(resolve, 2000)))
-        .then(() => axios
-          .post(`${API_BASE_URL}/api/baskets/products`, {
-            productId,
-            quantity: amount,
-          }, {
-            params: {
-              userAccessKey: context.state.userAccessKey,
-            },
-          })
-          .then((response) => {
-            context.commit('updateCartProductsData', response.data.items);
-            context.commit('syncCartProducts');
-          }));
+      return axios
+        .post(`${API_BASE_URL}/api/baskets/products`, {
+          productId,
+          quantity: amount,
+        }, {
+          params: {
+            userAccessKey: context.state.userAccessKey,
+          },
+        })
+        .then((response) => {
+          context.commit('updateCartProductsData', response.data.items);
+          context.commit('syncCartProducts');
+        });
     },
     updateCartProductAmount(context, { productId, amount }) {
       context.commit('updateCartProductAmount', { productId, amount });
