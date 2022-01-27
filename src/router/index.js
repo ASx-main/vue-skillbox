@@ -5,15 +5,17 @@ import NotFoundPage from '@/pages/NotFoundPage.vue';
 import ProductPage from '@/pages/ProductPage.vue';
 import ProductCart from '@/pages/CartPage.vue';
 import OrderPage from '@/pages/OrderPage.vue';
+import OrderInfoPage from '@/pages/OrderInfoPage.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   { name: 'main', component: MainPage, path: '/' },
   { name: 'product', component: ProductPage, path: '/product/:id' },
-  { name: 'notFond', component: NotFoundPage, path: '*' },
   { name: 'cart', component: ProductCart, path: '/cart' },
   { name: 'order', component: OrderPage, path: '/order' },
+  { name: 'orderInfo', component: OrderInfoPage, path: '/order/:id' },
+  { name: 'notFound', component: NotFoundPage, path: '*' },
 ];
 
 const router = new VueRouter({ routes });

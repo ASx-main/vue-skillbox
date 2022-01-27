@@ -37,9 +37,18 @@
         <h1 class="content__title">
           Корзина
         </h1>
-        <span class="content__info">
+        <span v-if="countProduct" class="content__info">
         {{ countProduct }}
-      </span>
+        </span>
+        <h3 v-else>
+          Корзина пуста! Добавьте товары из каталога
+          <router-link tag="button"
+                       :to="{name: 'main'}"
+                       class="cart__button button button--primery zero-products"
+          >
+            В каталог
+          </router-link>
+        </h3>
       </div>
 
       <section class="cart">
@@ -60,6 +69,7 @@
             </p>
 
             <router-link tag="button"
+                         :disabled="$store.state.cartProduct.length === 0"
                          :to="{name: 'order'}"
                          class="cart__button button button--primery"
                          type="submit">
@@ -196,5 +206,9 @@ html, body {
   background-color #222222
   color #ffffff
   border 2px solid #9eff00
+}
+.zero-products {
+  width 20%
+  margin 20px 30px
 }
 </style>

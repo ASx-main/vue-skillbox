@@ -25,10 +25,26 @@
       <span class="content__info">
         3 товара
       </span>
+      <div id="cube-loader">
+        <div class="caption"
+             v-if="loadFormPost">
+          <div class="cube-loader">
+            <div class="cube loader-1"></div>
+            <div class="cube loader-2"></div>
+            <div class="cube loader-4"></div>
+            <div class="cube loader-3"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+    <section class="cart"
+              v-show="!loadFormPost">
+      <form class="cart__form form"
+            action="#"
+            method="POST"
+            @submit.prevent="order"
+      >
         <div class="cart__field">
           <div class="cart__data">
             <BaseFormText title="ФИО"
@@ -36,44 +52,27 @@
                           :error="formError.name"
                           v-model="formData.name"
             />
+            <BaseFormText title="Адрес доставки"
+                          placeholder="Введите ваш адрес"
+                          :error="formError.address"
+                          v-model="formData.address"
+            />
 
-            <label class="form__label">
-              <input class="form__input"
-                     v-model="formData.address"
-                     type="text"
-                     name="address"
-                     placeholder="Введите ваш адрес">
-              <span class="form__value">Адрес доставки</span>
-              <span class="form__error"
-                    v-if="formError.address">{{formError.address}}</span>
-            </label>
-
-            <label class="form__label">
-              <input class="form__input"
-                     v-model="formData.phone"
-                     type="tel"
-                     name="phone"
-                     placeholder="Введите ваш телефон">
-              <span class="form__value">Телефон</span>
-              <span class="form__error"
-                    v-if="formError.phone">{{formError.phone}}</span>
-            </label>
-
-            <label class="form__label">
-              <input class="form__input"
-                     v-model="formData.email"
-                     type="email"
-                     name="email"
-                     placeholder="Введи ваш Email">
-              <span class="form__value">Email</span>
-              <span class="form__error"
-                    v-if="formError.email">{{formError.email}}</span>
-            </label>
+            <BaseFormText title="Телефон"
+                          placeholder="Введите ваш телефон"
+                          :error="formError.phone"
+                          v-model="formData.phone"
+            />
+            <BaseFormText title="Email"
+                          placeholder="Введите ваш Email"
+                          :error="formError.email"
+                          v-model="formData.email"
+            />
 
             <BaseFormTextarea title="Комментарии к заказу"
                               placeholder="Введите комментарий"
-                              :error="formError.comments"
-                              v-model="formData.comments"
+                              :error="formError.comment"
+                              v-model="formData.comment"
             />
           </div>
 
@@ -161,10 +160,12 @@
             Оформить заказ
           </button>
         </div>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block"
+              v-if="errorMessage"
+        >
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ errorMessage }}
           </p>
         </div>
       </form>
@@ -173,17 +174,20 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
+import axios from 'axios';
 import BaseFormText from '@/components/BaseFormText.vue';
 import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
 import numberFormat from '../helpers/numberFormat';
+import { API_BASE_URL } from '@/config';
 
 export default {
   data() {
     return {
       formData: {},
       formError: {},
-      priceDelivery: 500,
+      errorMessage: '',
+      loadFormPost: false,
     };
   },
   filters: {
@@ -195,6 +199,9 @@ export default {
       countProduct: 'cartCountProduct',
       totalPrice: 'cartTotalPrice',
     }),
+    ...mapState({
+      priceDelivery: (state) => state.priceDelivery,
+    }),
     totalPriceDelivery() {
       return this.totalPrice + this.priceDelivery;
     },
@@ -203,6 +210,31 @@ export default {
     ...mapActions({
       load: 'loadCart',
     }),
+    order() {
+      this.formError = {};
+      this.errorMessage = '';
+      this.loadFormPost = true;
+
+      return axios
+        .post(`${API_BASE_URL}/api/orders`, {
+          ...this.formData,
+        },
+        {
+          params: {
+            userAccessKey: this.$store.state.userAccessKey,
+          },
+        })
+        .then((response) => {
+          this.$store.commit('resetCart');
+          this.$store.commit('updateOrderInfo', response.data);
+          this.$router.push({ name: 'orderInfo', params: { id: response.data.id } });
+          this.loadFormPost = false;
+        })
+        .catch((error) => {
+          this.formError = error.response.data.error.request || {};
+          this.errorMessage = error.response.data.error.message;
+        });
+    },
   },
   created() {
     this.load();
@@ -210,3 +242,82 @@ export default {
   components: { BaseFormTextarea, BaseFormText },
 };
 </script>
+
+<style lang="stylus" scoped>
+html, body {
+  height 100%
+}
+
+#cube-loader {
+  display flex
+  justify-content center
+  margin 0 auto
+  height 100%
+  width 100%
+
+  & .caption {
+    margin 0 auto
+  }
+  .cube-loader {
+    width 73px
+    height 73px
+    margin 0 auto
+    margin-top 49px
+    position relative
+    transform rotateZ(45deg)
+
+    & .cube {
+      position relative
+      transform rotateZ(45deg)
+      width 50%
+      height 50%
+      float left
+      transform scale(1.1)
+    }
+    & .cube:before {
+      content ""
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
+      background-color rgba(52, 73, 94, 1.0)
+      animation cube-loader 2.76s infinite linear both
+      transform-origin 100% 100%
+    }
+    & .loader-2 {
+      transform scale(1.1) rotateZ(90deg)
+    }
+    & .loader-3 {
+      transform scale(1.1) rotateZ(180deg)
+    }
+    & .loader-4 {
+      transform scale(1.1) rotateZ(270deg)
+    }
+    & .loader-2:before {
+      animation-delay 0.35s
+    }
+    & .loader-3:before {
+      animation-delay 0.69s
+    }
+    & .loader-4:before {
+      animation-delay 1.04s
+    }
+  }
+}
+
+@keyframes cube-loader {
+  0%, 10% {
+    transform perspective(136px) rotateX(-180deg)
+    opacity 0
+  }
+  25%, 75% {
+    transform perspective(136px) rotateX(0deg)
+    opacity 1
+  }
+  90%, 100% {
+    transform perspective(136px) rotateY(180deg)
+    opacity 0
+  }
+}
+</style>

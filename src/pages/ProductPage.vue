@@ -135,7 +135,9 @@
 
                 <ProductAddToCart v-model="productAmount"/>
 
-                <button class="button button--primery" type="submit" :disabled="productAddSending">
+                <button class="button button--primery"
+                        type="submit"
+                        :disabled="productAddSending">
                   В корзину
                 </button>
               </div>
@@ -157,7 +159,8 @@
                       <div class="cube loader-3"></div>
                     </div>
                   </div>
-                </div></div>
+                </div>
+              </div>
 
             </form>
           </div>
@@ -310,7 +313,7 @@ export default {
     loadingProduct() {
       this.productLoad = true;
       this.productLoadFailed = false;
-      axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
+      return axios.get(`${API_BASE_URL}/api/products/${this.$route.params.id}`)
         .then((response) => {
           this.productData = response.data;
         })
