@@ -13,9 +13,12 @@ export default new Vuex.Store({
     loadCart: false,
     loadCartFailed: false,
     orderInfo: null,
-    priceDelivery: 500,
+    priceDelivery: null,
   },
   mutations: {
+    updatePriceDelivery(state, payload) {
+      state.priceDelivery = payload;
+    },
     updateOrderInfo(state, orderInfo) {
       state.orderInfo = orderInfo;
     },

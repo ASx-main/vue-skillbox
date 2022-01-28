@@ -1,16 +1,20 @@
 <template>
-  <main v-if="orderInfo" class="content container">
+  <main v-if="orderInfo"
+        class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
+          <router-link class="breadcrumbs__link"
+                       :to="{ name: 'main' }"
+          >
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
+          <router-link class="breadcrumbs__link"
+                       :to="{ name: 'cart' }">
             Корзина
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -84,12 +88,17 @@
             >
               <h3>{{ product.product.title }}</h3>
               <b>{{product.product.price | numberFormat }}₽</b>
-              <span>Артикул: {{ product.product.id }}</span>
+              <span>
+                Артикул: {{ product.product.id }}
+              </span>
+              <span>
+                В количестве {{ product.quantity }} шт.
+              </span>
             </li>
           </ul>
 
           <div class="cart__total">
-            <p>Доставка: <b>{{ priceDelivery }} ₽</b></p>
+            <p>Доставка: <b>{{ Number(priceDelivery) }} ₽</b></p>
             <p>Итого: <b>{{ countProduct }}</b>
               товара на сумму <b>{{ totalPriceDelivery | numberFormat }} ₽</b></p>
           </div>
@@ -121,7 +130,7 @@ export default {
       return this.countOrderProducts;
     },
     totalPriceDelivery() {
-      return this.totalPrice + this.priceDelivery;
+      return this.totalPrice + Number(this.priceDelivery);
     },
     productsOrder() {
       return this.orderInfo.basket.items;

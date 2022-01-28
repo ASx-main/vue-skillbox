@@ -3,14 +3,19 @@
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
+          <router-link class="breadcrumbs__link"
+                        :to="{ name: 'main' }"
+          >
             Каталог
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="#">
+          <router-link class="breadcrumbs__link"
+                       :to="{ name: 'cart' }"
+
+          >
             Корзина
-          </a>
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link">
@@ -36,6 +41,15 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div v-if="loadFormError"
+         class="failed">
+      <h2> Произошла ошибка</h2>
+      <h3 @click.prevent="order"
+              class="error">
+        Заполните необходимые поля
+      </h3>
     </div>
 
     <section class="cart"
@@ -78,14 +92,14 @@
 
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
-            <ul class="cart__options options">
+            <ul class="cart__options options" @change="updatePriceDelivery($event.target.value)">
               <li class="options__item">
                 <label class="options__label">
                   <input class="options__radio sr-only"
                          type="radio"
                          name="delivery"
-                         value="0"
-                         checked="">
+                         :value="0"
+                  >
                   <span class="options__value">
                     Самовывоз <b>бесплатно</b>
                   </span>
@@ -96,7 +110,8 @@
                   <input class="options__radio sr-only"
                          type="radio"
                          name="delivery"
-                         value="500">
+                         :value="500"
+                  >
                   <span class="options__value">
                     Курьером <b>500 ₽</b>
                   </span>
@@ -138,12 +153,17 @@
                 v-for="product in products" :key="product.id">
               <h3>{{ product.title }}</h3>
               <b>{{ product.price | numberFormat }}₽</b>
-              <span>Артикул: {{ product.productId }}</span>
+              <span>
+                Артикул: {{ product.productId }}
+              </span>
+              <span>
+                В количестве {{ product.amount }} шт.
+              </span>
             </li>
           </ul>
 
           <div class="cart__total">
-            <p>Доставка: <b>500 ₽</b></p>
+            <p>Доставка: <b>{{ Number(priceDelivery) }} ₽</b></p>
             <p>Итого:
               <b>
                 {{ countProduct }}
@@ -174,7 +194,9 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import {
+  mapActions, mapGetters, mapState, mapMutations,
+} from 'vuex';
 import axios from 'axios';
 import BaseFormText from '@/components/BaseFormText.vue';
 import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
@@ -188,6 +210,7 @@ export default {
       formError: {},
       errorMessage: '',
       loadFormPost: false,
+      loadFormError: false,
     };
   },
   filters: {
@@ -203,17 +226,21 @@ export default {
       priceDelivery: (state) => state.priceDelivery,
     }),
     totalPriceDelivery() {
-      return this.totalPrice + this.priceDelivery;
+      return this.totalPrice + Number(this.priceDelivery);
     },
   },
   methods: {
     ...mapActions({
       load: 'loadCart',
     }),
+    ...mapMutations({
+      updatePriceDelivery: 'updatePriceDelivery',
+    }),
     order() {
       this.formError = {};
       this.errorMessage = '';
       this.loadFormPost = true;
+      this.loadFormError = false;
 
       return axios
         .post(`${API_BASE_URL}/api/orders`, {
@@ -233,6 +260,8 @@ export default {
         .catch((error) => {
           this.formError = error.response.data.error.request || {};
           this.errorMessage = error.response.data.error.message;
+          this.loadFormError = true;
+          this.loadFormPost = false;
         });
     },
   },
@@ -319,5 +348,8 @@ html, body {
     transform perspective(136px) rotateY(180deg)
     opacity 0
   }
+}
+.error {
+  color red
 }
 </style>

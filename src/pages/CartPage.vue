@@ -211,4 +211,8 @@ html, body {
   width 20%
   margin 20px 30px
 }
+&.zero-products:hover {
+  background-color #222222
+  color #9eff00
+}
 </style>
